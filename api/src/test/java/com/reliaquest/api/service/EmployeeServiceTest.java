@@ -60,11 +60,26 @@ class EmployeeServiceTest {
     void getAllEmployees_Success() {
         // Given
         Map<String, Object> mockResponse = Map.of(
-            "data", List.of(
-                Map.of("id", "1", "employee_name", "Nick LaManna", "employee_salary", 50000, "employee_age", 30),
-                Map.of("id", "2", "employee_name", "Jane Smith", "employee_salary", 60000, "employee_age", 25)
-            )
-        );
+                "data",
+                List.of(
+                        Map.of(
+                                "id",
+                                "1",
+                                "employee_name",
+                                "Nick LaManna",
+                                "employee_salary",
+                                50000,
+                                "employee_age",
+                                30),
+                        Map.of(
+                                "id",
+                                "2",
+                                "employee_name",
+                                "Jane Smith",
+                                "employee_salary",
+                                60000,
+                                "employee_age",
+                                25)));
 
         Employee employee1 = new Employee();
         employee1.setId("1");
@@ -82,10 +97,10 @@ class EmployeeServiceTest {
         when(requestHeadersUriSpec.uri("/employee")).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(mockResponse);
-        
+
         when(objectMapper.convertValue(any(Map.class), eq(Employee.class)))
-            .thenReturn(employee1)
-            .thenReturn(employee2);
+                .thenReturn(employee1)
+                .thenReturn(employee2);
 
         // When
         List<Employee> result = employeeService.getAllEmployees();
@@ -119,9 +134,8 @@ class EmployeeServiceTest {
     void getEmployeeById_Success() {
         // Given
         String employeeId = "123";
-        Map<String, Object> mockResponse = Map.of(
-            "data", Map.of("id", employeeId, "employee_name", "Nick LaManna", "employee_salary", 50000)
-        );
+        Map<String, Object> mockResponse =
+                Map.of("data", Map.of("id", employeeId, "employee_name", "Nick LaManna", "employee_salary", 50000));
 
         Employee mockEmployee = new Employee();
         mockEmployee.setId(employeeId);
@@ -165,12 +179,11 @@ class EmployeeServiceTest {
     void getHighestSalaryOfEmployees_Success() {
         // Given
         Map<String, Object> mockResponse = Map.of(
-            "data", List.of(
-                Map.of("employee_salary", 50000),
-                Map.of("employee_salary", 75000),
-                Map.of("employee_salary", 60000)
-            )
-        );
+                "data",
+                List.of(
+                        Map.of("employee_salary", 50000),
+                        Map.of("employee_salary", 75000),
+                        Map.of("employee_salary", 60000)));
 
         Employee emp1 = new Employee();
         emp1.setEmployee_salary(50000);
@@ -184,9 +197,9 @@ class EmployeeServiceTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(mockResponse);
         when(objectMapper.convertValue(any(Map.class), eq(Employee.class)))
-            .thenReturn(emp1)
-            .thenReturn(emp2)
-            .thenReturn(emp3);
+                .thenReturn(emp1)
+                .thenReturn(emp2)
+                .thenReturn(emp3);
 
         // When
         Integer result = employeeService.getHighestSalaryOfEmployees();
@@ -204,9 +217,8 @@ class EmployeeServiceTest {
         input.setAge(30);
         input.setTitle("Developer");
 
-        Map<String, Object> mockResponse = Map.of(
-            "data", Map.of("id", "123", "employee_name", "Nick LaManna", "employee_salary", 50000)
-        );
+        Map<String, Object> mockResponse =
+                Map.of("data", Map.of("id", "123", "employee_name", "Nick LaManna", "employee_salary", 50000));
 
         Employee mockEmployee = new Employee();
         mockEmployee.setId("123");
@@ -234,12 +246,11 @@ class EmployeeServiceTest {
         // Given
         String searchString = "Nick";
         Map<String, Object> mockResponse = Map.of(
-            "data", List.of(
-                Map.of("id", "1", "employee_name", "Nick LaManna"),
-                Map.of("id", "2", "employee_name", "Jane Smith"),
-                Map.of("id", "3", "employee_name", "Nicky Rodriguez")
-            )
-        );
+                "data",
+                List.of(
+                        Map.of("id", "1", "employee_name", "Nick LaManna"),
+                        Map.of("id", "2", "employee_name", "Jane Smith"),
+                        Map.of("id", "3", "employee_name", "Nicky Rodriguez")));
 
         Employee emp1 = new Employee();
         emp1.setEmployee_name("Nick LaManna");
@@ -253,9 +264,9 @@ class EmployeeServiceTest {
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.body(any(ParameterizedTypeReference.class))).thenReturn(mockResponse);
         when(objectMapper.convertValue(any(Map.class), eq(Employee.class)))
-            .thenReturn(emp1)
-            .thenReturn(emp2)
-            .thenReturn(emp3);
+                .thenReturn(emp1)
+                .thenReturn(emp2)
+                .thenReturn(emp3);
 
         // When
         List<Employee> result = employeeService.getEmployeesByNameSearch(searchString);

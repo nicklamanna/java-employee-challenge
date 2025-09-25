@@ -37,15 +37,15 @@ public class EmployeeService {
             if (response != null && response.containsKey("data")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> employeeData = (List<Map<String, Object>>) response.get("data");
-                
+
                 List<Employee> employees = employeeData.stream()
                         .map(data -> objectMapper.convertValue(data, Employee.class))
                         .toList();
-                        
+
                 log.debug("Successfully fetched {} employees", employees.size());
                 return employees;
             }
-            
+
             log.warn("No data found in response");
             return List.of();
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class EmployeeService {
 
     public List<Employee> getEmployeesByNameSearch(String searchString) {
         log.debug("Searching employees by name: {}", searchString);
-        
+
         try {
             Map<String, Object> response = restClient
                     .get()
@@ -67,14 +67,14 @@ public class EmployeeService {
             if (response != null && response.containsKey("data")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> employeeData = (List<Map<String, Object>>) response.get("data");
-                
+
                 List<Employee> allEmployees = employeeData.stream()
                         .map(data -> objectMapper.convertValue(data, Employee.class))
                         .toList();
-                
+
                 List<Employee> filteredEmployees = new ArrayList<>();
                 String lowerSearchString = searchString.toLowerCase();
-                
+
                 for (Employee emp : allEmployees) {
                     if (emp.getEmployee_name() != null) {
                         String employeeName = emp.getEmployee_name().toLowerCase();
@@ -83,11 +83,11 @@ public class EmployeeService {
                         }
                     }
                 }
-                
+
                 log.debug("Found {} employees matching search '{}'", filteredEmployees.size(), searchString);
                 return filteredEmployees;
             }
-            
+
             log.warn("No data found in response");
             return List.of();
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class EmployeeService {
 
     public Employee getEmployeeById(String id) {
         log.debug("Fetching employee by id: {}", id);
-        
+
         try {
             Map<String, Object> response = restClient
                     .get()
@@ -113,7 +113,7 @@ public class EmployeeService {
                 log.debug("Successfully fetched employee with id: {}", id);
                 return employee;
             }
-            
+
             log.warn("No employee found with id: {}", id);
             return null;
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class EmployeeService {
 
     public Integer getHighestSalaryOfEmployees() {
         log.debug("Fetching highest salary");
-        
+
         try {
             Map<String, Object> response = restClient
                     .get()
@@ -135,21 +135,21 @@ public class EmployeeService {
             if (response != null && response.containsKey("data")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> employeeData = (List<Map<String, Object>>) response.get("data");
-                
+
                 List<Employee> employees = employeeData.stream()
                         .map(data -> objectMapper.convertValue(data, Employee.class))
                         .toList();
-                
+
                 Integer highestSalary = employees.stream()
                         .filter(emp -> emp.getEmployee_salary() != null)
                         .mapToInt(Employee::getEmployee_salary)
                         .max()
                         .orElse(0);
-                
+
                 log.debug("Highest salary found: {}", highestSalary);
                 return highestSalary;
             }
-            
+
             log.warn("No data found in response");
             return 0;
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public class EmployeeService {
 
     public List<String> getTopTenHighestEarningEmployeeNames() {
         log.debug("Fetching top 10 highest earning employees");
-        
+
         try {
             Map<String, Object> response = restClient
                     .get()
@@ -171,30 +171,30 @@ public class EmployeeService {
             if (response != null && response.containsKey("data")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> employeeData = (List<Map<String, Object>>) response.get("data");
-                
+
                 List<Employee> employees = employeeData.stream()
                         .map(data -> objectMapper.convertValue(data, Employee.class))
                         .toList();
-                
+
                 List<Employee> validEmployees = new ArrayList<>();
                 for (Employee emp : employees) {
                     if (emp.getEmployee_salary() != null) {
                         validEmployees.add(emp);
                     }
                 }
-                
+
                 validEmployees.sort((e1, e2) -> e2.getEmployee_salary() - e1.getEmployee_salary());
-                
+
                 List<String> topTenNames = new ArrayList<>();
                 int count = Math.min(10, validEmployees.size());
                 for (int i = 0; i < count; i++) {
                     topTenNames.add(validEmployees.get(i).getEmployee_name());
                 }
-                
+
                 log.debug("Found top {} highest earning employees", topTenNames.size());
                 return topTenNames;
             }
-            
+
             log.warn("No data found in response");
             return List.of();
         } catch (Exception e) {
@@ -205,7 +205,7 @@ public class EmployeeService {
 
     public Employee createEmployee(EmployeeInput employeeInput) {
         log.debug("Creating new employee: {}", employeeInput.getName());
-        
+
         try {
             Map<String, Object> response = restClient
                     .post()
@@ -221,7 +221,7 @@ public class EmployeeService {
                 log.debug("Successfully created employee with id: {}", employee.getId());
                 return employee;
             }
-            
+
             log.warn("No data found in create employee response");
             return null;
         } catch (Exception e) {
@@ -232,16 +232,16 @@ public class EmployeeService {
 
     public String deleteEmployeeById(String id) {
         log.debug("Deleting employee with id: {}", id);
-        
+
         try {
             Employee employee = getEmployeeById(id);
             if (employee == null) {
                 log.warn("Employee with id {} not found", id);
                 return "Employee not found";
             }
-            
+
             Map<String, String> deleteRequest = Map.of("name", employee.getEmployee_name());
-            
+
             Map<String, Object> response = restClient
                     .method(HttpMethod.DELETE)
                     .uri("/employee")
@@ -259,7 +259,7 @@ public class EmployeeService {
                     return "Delete failed";
                 }
             }
-            
+
             log.warn("No response received for delete operation");
             return "Delete failed - no response";
         } catch (Exception e) {

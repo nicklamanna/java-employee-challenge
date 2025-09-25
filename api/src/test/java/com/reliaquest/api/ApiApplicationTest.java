@@ -48,5 +48,4 @@ class ApiApplicationTest {
         // Verify that the application starts on the assigned random port
         assertTrue(port > 0, "Application should start on a valid port");
     }
-
 }

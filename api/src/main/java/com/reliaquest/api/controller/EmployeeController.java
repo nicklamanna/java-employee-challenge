@@ -34,8 +34,7 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     @GetMapping("/search/{searchString}")
-    public ResponseEntity<List<Employee>>
-    getEmployeesByNameSearch(@PathVariable String searchString) {
+    public ResponseEntity<List<Employee>> getEmployeesByNameSearch(@PathVariable String searchString) {
         log.debug("Searching employees by name: {}", searchString);
         return ResponseEntity.ok(employeeService.getEmployeesByNameSearch(searchString));
     }
